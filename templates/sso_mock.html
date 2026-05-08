@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO Redirect - AI Learning Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .sso-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--surface-2);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 24px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="particles" aria-hidden="true"></div>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <div class="sso-loader">
+        <div class="login-card glass-card" style="max-width: 400px;">
+            <div class="spinner"></div>
+            <h2 class="card-title">Authenticating...</h2>
+            <p class="card-sub">Connecting to <strong>{{ provider }}</strong> secure gateway</p>
+            
+            <div class="auth-success" style="margin-top: 20px;">
+                <i data-lucide="shield-check"></i>
+                Secure connection established
+            </div>
+
+            <div class="intelligence-tag" style="margin-top: 30px;">
+                <span class="blink-dot"></span>
+                Exchanging secure tokens...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Mock SSO redirect logic
+        setTimeout(() => {
+            const email = "user@example.com";
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/login';
+            
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email';
+            emailInput.value = email;
+            
+            const passwordInput = document.createElement('input');
+            passwordInput.type = 'hidden';
+            passwordInput.name = 'password';
+            passwordInput.value = 'password123'; // Mock password
+            
+            form.appendChild(emailInput);
+            form.appendChild(passwordInput);
+            document.body.appendChild(form);
+            form.submit();
+        }, 2000);
+    </script>
+</body>
+</html>
