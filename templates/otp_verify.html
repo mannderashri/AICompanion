@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Learning Companion - Verify OTP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-page">
+
+    <div class="particles" aria-hidden="true"></div>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <div class="login-wrapper">
+        <div class="login-hero" role="banner">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                Security Verification
+            </div>
+            <h1 class="hero-title">Verify Your<br /><span class="gradient-text">Identity</span></h1>
+            <p class="hero-sub">Enter the 6-digit code sent to your email to continue.</p>
+            
+            <div class="hero-stats">
+                <div class="stat-pill">
+                    <i data-lucide="shield-check"></i>
+                    <span>Secure Access</span>
+                </div>
+                <div class="stat-pill">
+                    <i data-lucide="lock"></i>
+                    <span>Encrypted</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-form-panel">
+            <div class="login-card glass-card">
+                <div class="card-logo">
+                    <div class="logo-glow">
+                        <i data-lucide="shield"></i>
+                    </div>
+                    <span class="logo-label">AI<strong>Companion</strong></span>
+                </div>
+
+                <h2 class="card-title">Check your inbox</h2>
+                <p class="card-sub">We've sent a verification code to <strong>{{ email }}</strong></p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}{% for category, message in messages %}
+                <div class="auth-{{ 'success' if category == 'success' else 'error' }}" role="alert">
+                    <i data-lucide="{{ 'check-circle' if category == 'success' else 'alert-circle' }}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}{% endif %}
+                {% endwith %}
+
+                <form action="/verify_otp" method="POST" class="login-form">
+                    <input type="hidden" name="email" value="{{ email }}">
+                    
+                    <div class="field-group">
+                        <label for="otp">Verification Code</label>
+                        <div class="field-wrap">
+                            <i data-lucide="key-round" class="field-icon"></i>
+                            <input id="otp" type="text" name="otp" 
+                                   placeholder="000000" maxlength="6" 
+                                   required autofocus autocomplete="one-time-code" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="primary-btn">
+                        <i data-lucide="shield-check"></i>
+                        <span>Verify Account</span>
+                    </button>
+                </form>
+
+                <div class="divider"><span>Still waiting?</span></div>
+                
+                <form action="/resend_otp" method="POST" id="resend-form">
+                    <input type="hidden" name="email" value="{{ email }}">
+                    <button type="submit" class="ghost-btn" id="resend-btn" style="width:100%; justify-content: center;">
+                        <i data-lucide="refresh-cw"></i>
+                        <span id="resend-text">Resend Code</span>
+                    </button>
+                </form>
+
+                <p class="toggle-auth">
+                    <span>Entered the wrong email?</span>
+                    <a href="/login">Sign in again</a>
+                </p>
+
+                <div class="intelligence-tag">
+                    <span class="blink-dot"></span>
+                    Waiting for handshake...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Simple countdown for resend button
+        let countdown = 0;
+        const resendBtn = document.getElementById('resend-btn');
+        const resendText = document.getElementById('resend-text');
+        
+        function updateResendUI() {
+            if (countdown > 0) {
+                resendBtn.disabled = true;
+                resendText.innerText = `Resend in ${countdown}s`;
+                countdown--;
+                setTimeout(updateResendUI, 1000);
+            } else {
+                resendBtn.disabled = false;
+                resendText.innerText = 'Resend Code';
+            }
+        }
+
+        // Trigger on click
+        document.getElementById('resend-form').addEventListener('submit', function() {
+            countdown = 30;
+            updateResendUI();
+        });
+    </script>
+</body>
+</html>
